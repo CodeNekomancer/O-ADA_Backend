@@ -24,14 +24,17 @@ public class OAdaBackendApplication {
 
         @PostConstruct
         public void init() {
-            us.genUniverse(new Universe("es1"));
-            us.genUniverse(new Universe("es170"));
-            us.genUniverse(new Universe("jp101"));
-            us.genUniverse(new Universe("mx115"));
-            us.genUniverse(new Universe("nl3"));
-            us.genUniverse(new Universe("nl124"));
-            us.genUniverse(new Universe("pl68"));
-            us.genUniverse(new Universe("us1"));
+            // TODO: is this necesary when DB prop configured?
+            if (us.findById(1L).isEmpty()) {
+                us.genUniverse(new Universe("es1"));
+                us.genUniverse(new Universe("es170"));
+                us.genUniverse(new Universe("jp101"));
+                us.genUniverse(new Universe("mx115"));
+                us.genUniverse(new Universe("nl3"));
+                us.genUniverse(new Universe("nl124"));
+                us.genUniverse(new Universe("pl68"));
+                us.genUniverse(new Universe("us1"));
+            }
         }
     }
 }

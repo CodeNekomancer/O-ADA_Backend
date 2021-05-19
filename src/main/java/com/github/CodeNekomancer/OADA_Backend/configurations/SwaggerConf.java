@@ -37,6 +37,6 @@ public class SwaggerConf {
     public ApiInfo apiInfo() {
         return new ApiInfoBuilder().title("O-ADA")
                 .description("API rest for O-ADA tool").version("0.1")
-                .contact(new Contact("E404ARPA", "https://github.com/CodeNekomancer", "CodeNekomancer@gmail.com")).build();
+                .contact(new Contact("CodeNekomancer", "https://github.com/CodeNekomancer", "CodeNekomancer@gmail.com")).build();
     }
 }

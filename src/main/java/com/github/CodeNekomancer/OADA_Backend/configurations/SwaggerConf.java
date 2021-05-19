@@ -20,7 +20,7 @@ public class SwaggerConf {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2).select()
-                .apis(RequestHandlerSelectors.basePackage("com.github.E404ARPA.OADA.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.github.CodeNekomancer.OADA_Backend.controller"))
                 .paths(PathSelectors.any()).build()
                 .apiInfo(apiInfo());
     }
@@ -37,6 +37,6 @@ public class SwaggerConf {
     public ApiInfo apiInfo() {
         return new ApiInfoBuilder().title("O-ADA")
                 .description("API rest for O-ADA tool").version("0.1")
-                .contact(new Contact("E404ARPA", "https://github.com/E404ARPA", "dam11.2020.jesuitas@gmail.com")).build();
+                .contact(new Contact("E404ARPA", "https://github.com/CodeNekomancer", "CodeNekomancer@gmail.com")).build();
     }
 }

@@ -33,7 +33,7 @@ public class UAccController {
             @ApiResponse(code = 404, message = "", response = Boolean.class)
     })
     @GetMapping("/getUAccMono")
-    public ResponseEntity<?> getUAccMono(@RequestBody Long id) {
+    public ResponseEntity<?> getUAccMono(@RequestParam Long id) {
         return new ResponseEntity(UAccSrvc.getUAccMonoSrvc(id), HttpStatus.OK);
     }
 

@@ -1,6 +1,7 @@
 package com.github.CodeNekomancer.OADA_Backend.controller;
 
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccInputDTO;
+import com.github.CodeNekomancer.OADA_Backend.model.UAcc.UAcc;
 import com.github.CodeNekomancer.OADA_Backend.persistence.service.UAccService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -33,8 +34,8 @@ public class UAccController {
             @ApiResponse(code = 404, message = "", response = Boolean.class)
     })
     @GetMapping("/getUAccMono")
-    public ResponseEntity<?> getUAccMono(@RequestParam Long id) {
-        return new ResponseEntity(UAccSrvc.getUAccMonoSrvc(id), HttpStatus.OK);
+    public ResponseEntity<?> getUAccMono(@RequestParam UAcc uacc) {
+        return new ResponseEntity(UAccSrvc.getUAccMonoSrvc(uacc.getUacc_ID()), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Deletes an UAcc")

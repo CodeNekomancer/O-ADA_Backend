@@ -5,7 +5,7 @@ import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.ADAcc;
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.AuthManagement.JwtUserResponse;
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.AuthManagement.LoginRequest;
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.ADAccDTOConverter;
-import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.GetADAccDTO;
+import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.AddADAccInputDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -44,7 +44,7 @@ public class AuthenticationController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/user/me")
-    public GetADAccDTO me(@AuthenticationPrincipal ADAcc user) {
+    public AddADAccInputDTO me(@AuthenticationPrincipal ADAcc user) {
         return converter.convertUserEntityToGetUserDto(user);
     }
 

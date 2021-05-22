@@ -14,7 +14,7 @@ public class ADAccDTOConverter {
         this.modelMapper = modelMapper;
     }
 
-    public GetADAccDTO convertUserEntityToGetUserDto(ADAcc user) {
-        return modelMapper.map(user, GetADAccDTO.class);
+    public AddADAccInputDTO convertUserEntityToGetUserDto(ADAcc user) {
+        return modelMapper.map(user, AddADAccInputDTO.class);
     }
 }

@@ -24,7 +24,7 @@ public class ADAccService extends BaseService<ADAcc, Long, ADAccRepository> {
         return this.repo.findByUsername(username);
     }
 
-    public ADAcc genADAccSrvc(ADAcc userEntity) {
+    public ADAcc addADAccSrvc(ADAcc userEntity) {
         Set<UserRole> defaultRoles = new HashSet<UserRole>();
         userEntity.setAdacc_ID((long) Math.abs(new Random().nextInt()));
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
@@ -74,7 +74,6 @@ public class ADAccService extends BaseService<ADAcc, Long, ADAccRepository> {
 
     private Boolean ADAccExists(Long id) {
         Optional<ADAcc> opAl = this.repo.findById(id);
-        boolean present = opAl.isPresent();
-        return present;
+        return opAl.isPresent();
     }
 }

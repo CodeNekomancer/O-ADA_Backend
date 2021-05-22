@@ -1,7 +1,9 @@
 package com.github.CodeNekomancer.OADA_Backend.controller;
 
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.ADAcc;
+import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.AddADAccInputDTO;
 import com.github.CodeNekomancer.OADA_Backend.persistence.service.ADAccService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -10,16 +12,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("adacc")
 public class ADAccController {
-    @Autowired
     private ADAccService ADAccSrvc;
+    private AddADAccInputDTO addADAccInputDTO;
 
     @PostMapping("/add")
-    public ResponseEntity<ADAcc> genADAcc(@RequestBody ADAcc newUser) {
+    public ResponseEntity<ADAcc> addADAcc(@RequestBody AddADAccInputDTO newUser) {
         try {
-            if (!ADAccSrvc.findByUserName(newUser.getUsername()).isPresent()) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(ADAccSrvc.genADAccSrvc(newUser));
+            if (ADAccSrvc.findByUserName(newUser.getUsername()).isEmpty()) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(ADAccSrvc.addADAccSrvc(addADAccInputDTO.converter(newUser)));
             } else {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
             }

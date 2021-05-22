@@ -2,6 +2,7 @@ package com.github.CodeNekomancer.OADA_Backend.controller;
 
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.ADAcc;
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.AddADAccInputDTO;
+import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.getADAccOutputDTO;
 import com.github.CodeNekomancer.OADA_Backend.persistence.service.ADAccService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class ADAccController {
     private ADAccService ADAccSrvc;
 
     @PostMapping("/add")
-    public ResponseEntity<ADAcc> addADAcc(@RequestBody AddADAccInputDTO newUser) {
+    public ResponseEntity<getADAccOutputDTO> addADAcc(@RequestBody AddADAccInputDTO newUser) {
         try {
             if (ADAccSrvc.findByUserName(newUser.getUsername()).isEmpty()) {
                 AddADAccInputDTO dto = new AddADAccInputDTO();

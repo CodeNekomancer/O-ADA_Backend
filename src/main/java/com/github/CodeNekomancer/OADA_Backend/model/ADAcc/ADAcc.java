@@ -32,7 +32,6 @@ public class ADAcc implements UserDetails {
     private String password;
 
     private String email;
-    private String community;
 
     @OneToMany(mappedBy = "itsADAcc")
     private List<UAcc> universeAccounts;

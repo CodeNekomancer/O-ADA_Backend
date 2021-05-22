@@ -17,7 +17,7 @@ public class JwtTokenProvider {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String TOKEN_TYPE = "JWT";
 
-    @Value("${jwt.secret:EveryoneDiesButNotEveryoneLives}")
+    @Value("${jwt.secret:EveryoneDiesButNotEveryoneLivesNowGoOutThereAndMakeSomeNiceCodeForMeToReadYouLazyLittlePieceOfBeautifulHuman}")
     private String jwtSecret;
 
     @Value("${jwt.token-expiration:86400}")

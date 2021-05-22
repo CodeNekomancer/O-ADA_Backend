@@ -2,6 +2,7 @@ package com.github.CodeNekomancer.OADA_Backend.persistence.service;
 
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.ADAcc;
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.AuthManagement.UserRole;
+import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.getADAccOutputDTO;
 import com.github.CodeNekomancer.OADA_Backend.persistence.repository.ADAccRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Lazy;
@@ -24,7 +25,7 @@ public class ADAccService extends BaseService<ADAcc, String, ADAccRepository> {
         return this.repo.findByUsername(username);
     }
 
-    public ADAcc addADAccSrvc(ADAcc userEntity) {
+    public getADAccOutputDTO addADAccSrvc(ADAcc userEntity) {
         Set<UserRole> defaultRoles = new HashSet<>();
         userEntity.setAdacc_ID(String.valueOf(Math.abs(new Random().nextInt())));
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
@@ -35,7 +36,7 @@ public class ADAccService extends BaseService<ADAcc, String, ADAccRepository> {
             defaultRoles.add(UserRole.LOG);
             userEntity.setRoles(defaultRoles);
         }
-        return this.repo.save(userEntity);
+        return new getADAccOutputDTO(this.repo.save(userEntity));
     }
 
     public ADAcc getUserMonoSrvc(String id) {

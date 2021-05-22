@@ -11,19 +11,19 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AddADAccInputDTO {
+public class getADAccOutputDTO {
+    private String adacc_ID;
     private String username;
     private String password;
     private String email;
+    private Set<UserRole> roles;
 
-    public ADAcc converter(AddADAccInputDTO inputDTO) {
-        ADAcc ada = new ADAcc();
-
-        if (inputDTO.getUsername() != null) ada.setUsername(inputDTO.getUsername());
-        if (inputDTO.getPassword() != null) ada.setPassword(inputDTO.getPassword());
-        if (inputDTO.getEmail() != null) ada.setEmail(inputDTO.getEmail());
-
-        return ada;
+    public getADAccOutputDTO(ADAcc ada) {
+        this.adacc_ID = ada.getAdacc_ID();
+        this.username = ada.getUsername();
+        this.password = ada.getPassword();
+        this.email = ada.getEmail();
+        this.email = ada.getEmail();
+        this.roles = ada.getRoles();
     }
-
 }

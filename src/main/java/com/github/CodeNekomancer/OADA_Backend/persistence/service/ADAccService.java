@@ -39,7 +39,7 @@ public class ADAccService extends BaseService<ADAcc, String, ADAccRepository> {
         return new getADAccOutputDTO(this.repo.save(userEntity));
     }
 
-    public ADAcc getUserMonoSrvc(String id) {
+    public ADAcc getUserSngSrvc(String id) {
         Optional<ADAcc> opUsr = this.repo.findById(id);
         return opUsr.orElseGet(ADAcc::new);
     }

@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.Set;
 public class ADAcc implements UserDetails {
 
     @Id
-    private Long adacc_ID;
+    private String adacc_ID;
 
     @Column(unique = true)
     private String username;
@@ -40,6 +41,7 @@ public class ADAcc implements UserDetails {
     @Enumerated(EnumType.STRING)
     Set<UserRole> roles;
 
+    @Serial
     private static final long serialVersionUID = -8596969777924519849L;
 
     public ADAcc(String username, Set<UserRole> roles) {
@@ -49,7 +51,7 @@ public class ADAcc implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set result = new HashSet<>();
+        Set<GrantedAuthority> result = new HashSet<>();
         for (UserRole userRole : roles) {
             SimpleGrantedAuthority sga = new SimpleGrantedAuthority("ROLE_" + userRole.name());
             result.add(sga);

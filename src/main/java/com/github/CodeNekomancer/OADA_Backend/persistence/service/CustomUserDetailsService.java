@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
     }
 
-    public UserDetails loadUserById(Long id) throws UsernameNotFoundException {
+    public UserDetails loadUserById(String id) throws UsernameNotFoundException {
         Optional<ADAcc> user = userEntityService.findById(id);
         if (user.isPresent()) {
             return user.get();

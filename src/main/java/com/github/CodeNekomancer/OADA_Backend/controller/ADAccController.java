@@ -16,13 +16,13 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("adacc")
 public class ADAccController {
     private ADAccService ADAccSrvc;
-    private AddADAccInputDTO addADAccInputDTO;
 
     @PostMapping("/add")
     public ResponseEntity<ADAcc> addADAcc(@RequestBody AddADAccInputDTO newUser) {
         try {
             if (ADAccSrvc.findByUserName(newUser.getUsername()).isEmpty()) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(ADAccSrvc.addADAccSrvc(addADAccInputDTO.converter(newUser)));
+                AddADAccInputDTO dto = new AddADAccInputDTO();
+                return ResponseEntity.status(HttpStatus.CREATED).body(ADAccSrvc.addADAccSrvc(dto.converter(newUser)));
             } else {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
             }
@@ -41,18 +41,18 @@ public class ADAccController {
     }
 
 
-    @GetMapping("{idADAcc}")
-    public ResponseEntity<?> getADAccMono(@PathVariable(name = "id") Long adacc_ID) {
+    @GetMapping("{id}")
+    public ResponseEntity<?> getADAccMono(@PathVariable(name = "id") String id) {
         try {
-            ADAcc a = this.ADAccSrvc.getUserMonoSrvc(adacc_ID);
-            return (!a.getAdacc_ID().toString().isEmpty()) ? ResponseEntity.status(HttpStatus.OK).body(a) : ResponseEntity.notFound().build();
+            ADAcc a = this.ADAccSrvc.getUserMonoSrvc(id);
+            return (!a.getAdacc_ID().isEmpty()) ? ResponseEntity.status(HttpStatus.OK).body(a) : ResponseEntity.notFound().build();
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
-    @DeleteMapping("{idADAcc}")
-    public ResponseEntity<?> delADAcc(@PathVariable(name = "id") Long adacc_ID) {
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> delADAcc(@PathVariable(name = "id") String adacc_ID) {
         try {
             return (this.ADAccSrvc.delADAccSrvc(adacc_ID)) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
         } catch (DataIntegrityViolationException e) {
@@ -60,10 +60,11 @@ public class ADAccController {
         }
     }
 
-    @PutMapping("/{idADAcc}/edit")
-    public ResponseEntity<?> modADAcc(@RequestBody(required = true) ADAcc userEntity, @PathVariable Long id) {
+    @PutMapping("/{id}/edit")
+    public ResponseEntity<?> modADAcc(@RequestBody() AddADAccInputDTO userEntity, @PathVariable(name = "id") String id) {
         try {
-            return (this.ADAccSrvc.modADAccSrvc(userEntity, id))
+            AddADAccInputDTO dto = new AddADAccInputDTO();
+            return (this.ADAccSrvc.modADAccSrvc(dto.converter(userEntity), id))
                     ? ResponseEntity.ok().body(this.ADAccSrvc.findById(id))
                     : ResponseEntity.notFound().build();
 

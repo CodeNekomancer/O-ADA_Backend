@@ -14,13 +14,11 @@ import java.util.Set;
 public class AddADAccInputDTO {
     private String username;
     private String password;
-    private Set<UserRole> roles;
 
     public ADAcc converter(AddADAccInputDTO inputDTO) {
         ADAcc ada = new ADAcc();
         ada.setUsername(inputDTO.getUsername());
         ada.setPassword(inputDTO.getPassword());
-        ada.setRoles(inputDTO.getRoles());
 
         return ada;
     }

@@ -48,11 +48,12 @@ public class ADAccController {
 
     @GetMapping("/sng/{id}")
     @PreAuthorize("hasAnyRole('LOG', 'ADA')")
-    public ResponseEntity<?> getADAccSng(@PathVariable(name = "id") String id, Principal principal) {
-        System.out.println(authenticationFacade.getAuthentication().getName());
+    public ResponseEntity<?> getADAccSng(@PathVariable(name = "id") String id) {
+        getADAccOutputDTO ada = new getADAccOutputDTO(this.ADAccSrvc.getUserSngSrvc(id)); // TODO: let admins override this
+        if (!authenticationFacade.getAuthentication().getName().equals(ada.getUsername())) return ResponseEntity.status(401).body("You are trying to access to a resource that it is not on your domain. Think twice what you are asking for.");
+
         try {
-            ADAcc a = this.ADAccSrvc.getUserSngSrvc(id);
-            return (!a.getAdacc_ID().isEmpty()) ? principal.getName().equals(a.getUsername()) ? ResponseEntity.status(HttpStatus.OK).body(a) : ResponseEntity.notFound().build() : ResponseEntity.notFound().build();
+            return (!ada.getAdacc_ID().isEmpty()) ? ResponseEntity.status(HttpStatus.OK).body(ada) : ResponseEntity.notFound().build();
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -60,17 +61,23 @@ public class ADAccController {
 
     @DeleteMapping("/del/{id}")
     @PreAuthorize("hasAnyRole('LOG', 'ADA')")
-    public ResponseEntity<?> delADAcc(@PathVariable(name = "id") String adacc_ID, Principal principal) {
+    public ResponseEntity<?> delADAcc(@PathVariable(name = "id") String id) {
+        getADAccOutputDTO ada = new getADAccOutputDTO(this.ADAccSrvc.getUserSngSrvc(id)); // TODO: let admins override this
+        if (!authenticationFacade.getAuthentication().getName().equals(ada.getUsername())) return ResponseEntity.status(401).body("You are trying to access to a resource that it is not on your domain. Think twice what you are asking for.");
+
         try {
-            return (this.ADAccSrvc.delADAccSrvc(adacc_ID)) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+            return (this.ADAccSrvc.delADAccSrvc(id)) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
         } catch (DataIntegrityViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
-    @PutMapping("/edit/{id}")
+    @PutMapping("/mod/{id}")
     @PreAuthorize("hasAnyRole('LOG', 'ADA')")
     public ResponseEntity<?> modADAcc(@RequestBody() AddADAccInputDTO userEntity, @PathVariable(name = "id") String id) {
+        getADAccOutputDTO ada = new getADAccOutputDTO(this.ADAccSrvc.getUserSngSrvc(id)); // TODO: let admins override this
+        if (!authenticationFacade.getAuthentication().getName().equals(ada.getUsername())) return ResponseEntity.status(401).body("You are trying to access to a resource that it is not on your domain. Think twice what you are asking for.");
+
         try {
             AddADAccInputDTO dto = new AddADAccInputDTO();
             return (this.ADAccSrvc.modADAccSrvc(dto.converter(userEntity), id))

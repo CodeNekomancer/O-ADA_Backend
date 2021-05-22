@@ -9,8 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.security.Principal;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -33,7 +37,9 @@ public class ADAccController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Iterable<ADAcc>> getADAccMult() {
+    @PreAuthorize("hasAnyRole('ADA')")
+    public ResponseEntity<Iterable<ADAcc>> getADAccAll(Principal principal) {
+        System.out.println(principal.getName());
         try {
             return ResponseEntity.status(HttpStatus.OK).body(ADAccSrvc.findAll());
         } catch (DataIntegrityViolationException e) {
@@ -41,9 +47,10 @@ public class ADAccController {
         }
     }
 
+    @GetMapping("/sng/{id}")
+    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
+    public ResponseEntity<?> getADAccSng(@PathVariable(name = "id") String id, Principal principal) {
 
-    @GetMapping("{id}")
-    public ResponseEntity<?> getADAccMono(@PathVariable(name = "id") String id) {
         try {
             ADAcc a = this.ADAccSrvc.getUserMonoSrvc(id);
             return (!a.getAdacc_ID().isEmpty()) ? ResponseEntity.status(HttpStatus.OK).body(a) : ResponseEntity.notFound().build();
@@ -52,7 +59,8 @@ public class ADAccController {
         }
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/del/{id}")
+    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
     public ResponseEntity<?> delADAcc(@PathVariable(name = "id") String adacc_ID) {
         try {
             return (this.ADAccSrvc.delADAccSrvc(adacc_ID)) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
@@ -61,7 +69,8 @@ public class ADAccController {
         }
     }
 
-    @PutMapping("/{id}/edit")
+    @PutMapping("/edit/{id}")
+    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
     public ResponseEntity<?> modADAcc(@RequestBody() AddADAccInputDTO userEntity, @PathVariable(name = "id") String id) {
         try {
             AddADAccInputDTO dto = new AddADAccInputDTO();

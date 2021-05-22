@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,9 +23,9 @@ public class UAccController {
             @ApiResponse(code = 200, message = "", response = Boolean.class),
             @ApiResponse(code = 404, message = "", response = Boolean.class)
     })
-    @PostMapping("/genUAcc")
-    public ResponseEntity<?> genUAcc(@RequestBody UAccInputDTO UAccDTO) {
-        return new ResponseEntity(UAccSrvc.genUAccSrvc(UAccDTO), HttpStatus.OK);
+    @PostMapping("/addUAcc")
+    public ResponseEntity<?> addUAcc(@RequestBody UAccInputDTO UAccDTO) {
+        return new ResponseEntity(UAccSrvc.addUAccSrvc(UAccDTO), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Gets an UAcc")

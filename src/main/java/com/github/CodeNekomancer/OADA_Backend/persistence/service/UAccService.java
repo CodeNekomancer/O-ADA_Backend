@@ -32,7 +32,7 @@ public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
     @Autowired
     private EPService EPSrvc;
 
-    public Boolean genUAccSrvc(UAccInputDTO uAccInputDTO) {
+    public Boolean addUAccSrvc(UAccInputDTO uAccInputDTO) {
         Optional<Universe> ou = universe.repo.findById(uAccInputDTO.getItsUniverse());
         Optional<ADAcc> oa = adacc.repo.findById(uAccInputDTO.getItsADAcc());
 

@@ -1,16 +1,15 @@
 package com.github.CodeNekomancer.OADA_Backend.persistence.service;
 
+import com.github.CodeNekomancer.OADA_Backend.configurations.XMLmanager.XmlUtil;
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.ADAcc;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccInputDTO;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccInputDTOConverter;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.UAcc;
 import com.github.CodeNekomancer.OADA_Backend.model.Universe.Universe;
 import com.github.CodeNekomancer.OADA_Backend.persistence.repository.UAccRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -21,16 +20,12 @@ import java.net.URL;
 import java.util.*;
 
 @Service
+@AllArgsConstructor
 public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
-
-    @Autowired
-    private UAccInputDTOConverter UACCUDTOC;
-    @Autowired
-    private UniverseService universe;
-    @Autowired
-    private ADAccService adacc;
-    @Autowired
-    private EPService EPSrvc;
+    private final UAccInputDTOConverter UACCUDTOC;
+    private final UniverseService universe;
+    private final ADAccService adacc;
+    private final EPService EPSrvc;
 
     public Boolean addUAccSrvc(UAccInputDTO uAccInputDTO) {
         Optional<Universe> ou = universe.repo.findById(uAccInputDTO.getItsUniverse());
@@ -57,7 +52,7 @@ public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
     private UAcc getUAccWithOgameId(UAcc uAcc) {
         String url;
         List<String> urlList =
-                new ArrayList<String>() {
+                new ArrayList<>() {
                     {
                         add("https://s");
                         add("-");
@@ -123,30 +118,5 @@ public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
     public boolean delUAccSngSrvc(Long id) {
         this.repo.deleteById(id);
         return !this.repo.existsById(id);
-    }
-
-    public static final class XmlUtil {
-        private XmlUtil() {
-        }
-
-        public static List<Node> asList(NodeList n) {
-            return n.getLength() == 0 ? Collections.emptyList() : new NodeListWrapper(n);
-        }
-
-        static final class NodeListWrapper extends AbstractList<Node> implements RandomAccess {
-            private final NodeList list;
-
-            NodeListWrapper(NodeList l) {
-                list = l;
-            }
-
-            public Node get(int index) {
-                return list.item(index);
-            }
-
-            public int size() {
-                return list.getLength();
-            }
-        }
     }
 }

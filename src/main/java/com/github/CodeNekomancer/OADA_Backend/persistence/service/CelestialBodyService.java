@@ -1,5 +1,6 @@
 package com.github.CodeNekomancer.OADA_Backend.persistence.service;
 
+import com.github.CodeNekomancer.OADA_Backend.configurations.XMLmanager.XmlUtil;
 import com.github.CodeNekomancer.OADA_Backend.model.CelestialBody.CelestialBody;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.UAcc;
 import com.github.CodeNekomancer.OADA_Backend.persistence.repository.CelestialBodyRepository;
@@ -7,8 +8,6 @@ import com.github.CodeNekomancer.OADA_Backend.persistence.repository.UAccReposit
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -16,7 +15,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -25,12 +25,12 @@ public class CelestialBodyService
     private final UAccRepository uAccRepository;
 
     public boolean genCelestialBodySchemeAuto(UAcc uacc) {
-        if (!uAccRepository.findById(uacc.getUacc_ID()).isPresent()) return false;
+        if (uAccRepository.findById(uacc.getUacc_ID()).isEmpty()) return false;
 
         UAcc uAcc = uAccRepository.findById(uacc.getUacc_ID()).get();
         String url;
         List<String> urlList =
-                new ArrayList<String>() {
+                new ArrayList<>() {
                     {
                         add("https://s");
                         add("-");
@@ -38,7 +38,7 @@ public class CelestialBodyService
                     }
                 };
 
-        if (!uAccRepository.findById(uAcc.getUacc_ID()).isPresent()) {
+        if (uAccRepository.findById(uAcc.getUacc_ID()).isEmpty()) {
             System.out.println("uacc id doesnt exist (celestial body)");
             return false;
         }
@@ -61,7 +61,7 @@ public class CelestialBodyService
             doc = db.parse(url);
             doc.getDocumentElement().normalize();
             System.out.println("got the doc");
-            UAccService.XmlUtil.asList(doc.getDocumentElement().getChildNodes()).stream()
+            XmlUtil.asList(doc.getDocumentElement().getChildNodes()).stream()
                     .filter(planets -> planets.getNodeName().equals("planets"))
                     .forEach(
                             planets -> {
@@ -193,30 +193,5 @@ public class CelestialBodyService
         }
 
         return true;
-    }
-
-    public static final class XmlUtil {
-        private XmlUtil() {
-        }
-
-        public static List<Node> asList(NodeList n) {
-            return n.getLength() == 0 ? Collections.emptyList() : new NodeListWrapper(n);
-        }
-
-        static final class NodeListWrapper extends AbstractList<Node> implements RandomAccess {
-            private final NodeList list;
-
-            NodeListWrapper(NodeList l) {
-                list = l;
-            }
-
-            public Node get(int index) {
-                return list.item(index);
-            }
-
-            public int size() {
-                return list.getLength();
-            }
-        }
     }
 }

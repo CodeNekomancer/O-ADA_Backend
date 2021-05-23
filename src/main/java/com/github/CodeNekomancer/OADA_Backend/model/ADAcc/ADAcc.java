@@ -40,6 +40,7 @@ public class ADAcc implements UserDetails {
     @Enumerated(EnumType.STRING)
     Set<UserRole> roles;
 
+    @Serial
     private static final long serialVersionUID = -8596969777924519849L;
 
     public ADAcc(String username, Set<UserRole> roles) {

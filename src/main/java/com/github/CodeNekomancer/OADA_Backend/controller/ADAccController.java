@@ -13,14 +13,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.security.Principal;
-
 @RestController
 @AllArgsConstructor
 @RequestMapping("adacc")
 public class ADAccController {
-    private ADAccService ADAccSrvc;
-    private IAuthenticationFacade authenticationFacade;
+    private final ADAccService ADAccSrvc;
+    private final IAuthenticationFacade authenticationFacade;
 
     @PostMapping("/add")
     public ResponseEntity<getADAccOutputDTO> addADAcc(@RequestBody AddADAccInputDTO newUser) {

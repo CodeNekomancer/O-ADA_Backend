@@ -3,6 +3,7 @@ package com.github.CodeNekomancer.OADA_Backend.controller;
 import com.github.CodeNekomancer.OADA_Backend.configurations.security.IAuthenticationFacade;
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.getADAccOutputDTO;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccInputDTO;
+import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccOutputDTO;
 import com.github.CodeNekomancer.OADA_Backend.persistence.service.ADAccService;
 import com.github.CodeNekomancer.OADA_Backend.persistence.service.UAccService;
 import io.swagger.annotations.ApiOperation;
@@ -23,8 +24,8 @@ public class UAccController {
 
     @ApiOperation(value = "Creates a UAcc")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "", response = Boolean.class),
-            @ApiResponse(code = 404, message = "", response = Boolean.class)
+            @ApiResponse(code = 200, message = "", response = UAccOutputDTO.class),
+            @ApiResponse(code = 404, message = "")
     })
     @PostMapping("/addUAcc")
     @PreAuthorize("hasAnyRole('LOG', 'ADA')")
@@ -37,14 +38,15 @@ public class UAccController {
 
     @ApiOperation(value = "Gets an UAcc")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "", response = Boolean.class),
-            @ApiResponse(code = 404, message = "", response = Boolean.class)
+            @ApiResponse(code = 200, message = "", response = UAccOutputDTO.class),
+            @ApiResponse(code = 404, message = "")
     })
     @GetMapping("/sng/{id}")
     @PreAuthorize("hasAnyRole('LOG', 'ADA')")
     public ResponseEntity<?> getUAccSng(@PathVariable(name = "id") Long id) {
         if (this.UAccSrvc.findById(id).isEmpty()) return ResponseEntity.notFound().build();
 
+        // TODO: let admins override this
         getADAccOutputDTO ada = new getADAccOutputDTO(adAccService.getUserSngSrvc(this.UAccSrvc.findById(id).get().getItsADAcc().getAdacc_ID())); // TODO: let admins override this
         if (!authenticationFacade.getAuthentication().getName().equals(ada.getUsername())) return ResponseEntity.status(401).body("You are trying to access to a resource that it is not on your domain. Think twice what you are asking for.");
 
@@ -54,13 +56,14 @@ public class UAccController {
     @ApiOperation(value = "Deletes an UAcc")
     @ApiResponses({
             @ApiResponse(code = 200, message = "", response = Boolean.class),
-            @ApiResponse(code = 404, message = "", response = Boolean.class)
+            @ApiResponse(code = 404, message = "")
     })
     @DeleteMapping("/del/{id}")
     @PreAuthorize("hasAnyRole('LOG', 'ADA')")
     public ResponseEntity<?> delUAccSng(@PathVariable(name = "id") Long id) {
         if (this.UAccSrvc.findById(id).isEmpty()) return ResponseEntity.notFound().build();
 
+        // TODO: let admins override this
         getADAccOutputDTO ada = new getADAccOutputDTO(adAccService.getUserSngSrvc(this.UAccSrvc.findById(id).get().getItsADAcc().getAdacc_ID())); // TODO: let admins override this
         if (!authenticationFacade.getAuthentication().getName().equals(ada.getUsername())) return ResponseEntity.status(401).body("You are trying to access to a resource that it is not on your domain. Think twice what you are asking for.");
 

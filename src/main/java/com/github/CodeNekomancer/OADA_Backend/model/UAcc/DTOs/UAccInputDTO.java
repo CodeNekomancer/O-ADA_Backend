@@ -13,6 +13,6 @@ public class UAccInputDTO {
     private Long ogameUniverseAccountId;
     private Integer darkMatter;
     private String gameStyleClass;
-    private Long itsADAcc;
+    private String itsADAcc;
     private Long itsUniverse;
 }

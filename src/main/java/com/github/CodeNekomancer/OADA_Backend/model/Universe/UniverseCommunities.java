@@ -1,4 +1,4 @@
-package com.github.CodeNekomancer.OADA_Backend.model.UAcc;
+package com.github.CodeNekomancer.OADA_Backend.model.Universe;
 
 public enum UniverseCommunities {
     ar,

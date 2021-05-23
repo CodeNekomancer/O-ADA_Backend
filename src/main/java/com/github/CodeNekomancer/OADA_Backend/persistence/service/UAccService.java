@@ -1,16 +1,18 @@
 package com.github.CodeNekomancer.OADA_Backend.persistence.service;
 
+import com.github.CodeNekomancer.OADA_Backend.configurations.ExceptionManager.NotFound.UAccNotFoundException;
+import com.github.CodeNekomancer.OADA_Backend.configurations.ExceptionManager.NotFound.UniverseNotFoundException;
+import com.github.CodeNekomancer.OADA_Backend.configurations.XMLmanager.XmlUtil;
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.ADAcc;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccInputDTO;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccInputDTOConverter;
+import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccOutputDTO;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.UAcc;
 import com.github.CodeNekomancer.OADA_Backend.model.Universe.Universe;
 import com.github.CodeNekomancer.OADA_Backend.persistence.repository.UAccRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -21,26 +23,19 @@ import java.net.URL;
 import java.util.*;
 
 @Service
+@AllArgsConstructor
 public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
+    private final UAccInputDTOConverter UACCUDTOC;
+    private final UniverseService universe;
+    private final ADAccService adacc;
+    private final EPService EPSrvc;
 
-    @Autowired
-    private UAccInputDTOConverter UACCUDTOC;
-    @Autowired
-    private UniverseService universe;
-    @Autowired
-    private ADAccService adacc;
-    @Autowired
-    private EPService EPSrvc;
-
-    public Boolean genUAccSrvc(UAccInputDTO uAccInputDTO) {
+    public UAccOutputDTO addUAccSrvc(UAccInputDTO uAccInputDTO) {
         Optional<Universe> ou = universe.repo.findById(uAccInputDTO.getItsUniverse());
         Optional<ADAcc> oa = adacc.repo.findById(uAccInputDTO.getItsADAcc());
 
-        if (!(oa.isPresent() && ou.isPresent())) {
-            System.out.println("ADAcc: " + oa.isPresent());
-            System.out.println("Unvierse: " + ou.isPresent());
-            return false;
-        }
+        if (oa.isEmpty()) throw new UAccNotFoundException();
+        if (ou.isEmpty()) throw new UniverseNotFoundException();
 
         UAcc uAcc = new UAcc();
         uAcc = UACCUDTOC.convertUaccInputDTOtoUAcc(uAcc, uAccInputDTO);
@@ -49,15 +44,18 @@ public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
         uAcc.setOgameUniverseAccountId(getUAccWithOgameId(uAcc).getOgameUniverseAccountId());
 
         this.repo.save(uAcc);
-        EPSrvc.genEPSrvc(uAcc);
+        EPSrvc.addSrvc(uAcc);
 
-        return this.repo.findById(uAcc.getUacc_ID()).isPresent();
+        if (this.repo.findById(uAcc.getUacc_ID()).isEmpty())
+            throw new UAccNotFoundException();
+
+        return new UAccOutputDTO(this.repo.findById(uAcc.getUacc_ID()).get());
     }
 
-    private UAcc getUAccWithOgameId(UAcc uAcc) {
+    private UAccOutputDTO getUAccWithOgameId(UAcc uAcc) {
         String url;
         List<String> urlList =
-                new ArrayList<String>() {
+                new ArrayList<>() {
                     {
                         add("https://s");
                         add("-");
@@ -81,7 +79,6 @@ public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
             doc = db.parse(url);
             doc.getDocumentElement().normalize();
 
-            System.out.println(uAcc.getName());
             XmlUtil.asList(doc.getDocumentElement().getChildNodes())
                     .forEach(
                             node -> {
@@ -106,47 +103,20 @@ public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
                                                                             .lastIndexOf('"'))));
                                 }
                             });
-
-            System.out.println(uAcc.getOgameUniverseAccountId());
         } catch (ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
         }
-        return uAcc;
+        return new UAccOutputDTO(uAcc);
     }
 
-    public UAcc getUAccMonoSrvc(Long id) {
-        if (this.repo.findById(id).isPresent()) return this.repo.findById(id).get();
-
-        return null;
+    public UAccOutputDTO getUAccSngSrvc(Long id) {
+        if (this.repo.findById(id).isPresent()) return new UAccOutputDTO(this.repo.findById(id).get());
+        throw new UAccNotFoundException();
     }
 
-    public boolean delUAccMonoSrvc(Long id) {
+    public boolean delUAccSngSrvc(Long id) {
+        if (!this.repo.existsById(id)) throw new UAccNotFoundException();
         this.repo.deleteById(id);
         return !this.repo.existsById(id);
-    }
-
-    public static final class XmlUtil {
-        private XmlUtil() {
-        }
-
-        public static List<Node> asList(NodeList n) {
-            return n.getLength() == 0 ? Collections.emptyList() : new NodeListWrapper(n);
-        }
-
-        static final class NodeListWrapper extends AbstractList<Node> implements RandomAccess {
-            private final NodeList list;
-
-            NodeListWrapper(NodeList l) {
-                list = l;
-            }
-
-            public Node get(int index) {
-                return list.item(index);
-            }
-
-            public int size() {
-                return list.getLength();
-            }
-        }
     }
 }

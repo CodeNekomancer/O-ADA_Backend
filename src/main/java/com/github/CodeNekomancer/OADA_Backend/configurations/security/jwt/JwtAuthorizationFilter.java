@@ -33,7 +33,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             String token = getJwtFromRequest(request);
 
             if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
-                Long userId = tokenProvider.getUserIdFromJWT(token);
+                String userId = tokenProvider.getUserIdFromJWT(token);
 
                 ADAcc user = (ADAcc) userDetailsService.loadUserById(userId);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, user.getRoles(), user.getAuthorities());
@@ -53,7 +53,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader(JwtTokenProvider.TOKEN_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(JwtTokenProvider.TOKEN_PREFIX)) {
-            return bearerToken.substring(JwtTokenProvider.TOKEN_PREFIX.length(), bearerToken.length());
+            return bearerToken.substring(JwtTokenProvider.TOKEN_PREFIX.length());
         }
         return null;
     }

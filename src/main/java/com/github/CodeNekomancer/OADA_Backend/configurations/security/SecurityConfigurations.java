@@ -1,6 +1,7 @@
 package com.github.CodeNekomancer.OADA_Backend.configurations.security;
 
 import com.github.CodeNekomancer.OADA_Backend.configurations.security.jwt.JwtAuthorizationFilter;
+import io.swagger.models.HttpMethod;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,7 +41,15 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().authorizeRequests()
+
                 /*
+                .antMatchers(String.valueOf(HttpMethod.GET), "/adacc/add").permitAll()
+                .antMatchers(String.valueOf(HttpMethod.GET), "/adacc/del").permitAll()
+                .antMatchers(String.valueOf(HttpMethod.GET), "/adacc/get/all").permitAll()
+                .antMatchers(String.valueOf(HttpMethod.GET), "/adacc/get/pag").permitAll()
+                .antMatchers(String.valueOf(HttpMethod.GET), "/adacc/get/sng").permitAll()
+                .antMatchers(String.valueOf(HttpMethod.GET), "/adacc/edit").hasRole("ADMIN")
+
                 .antMatchers(HttpMethod.POST, "/alumno/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/profesor/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/responsable/**").permitAll()

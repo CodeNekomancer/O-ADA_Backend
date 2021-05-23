@@ -1,5 +1,8 @@
 package com.github.CodeNekomancer.OADA_Backend.controller;
 
+import com.github.CodeNekomancer.OADA_Backend.configurations.security.IAuthenticationFacade;
+import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.getADAccOutputDTO;
+import com.github.CodeNekomancer.OADA_Backend.persistence.service.ADAccService;
 import com.github.CodeNekomancer.OADA_Backend.persistence.service.UniverseService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -17,6 +20,10 @@ public class UniverseController {
 
     @Autowired
     private UniverseService UniverseSrvc;
+    @Autowired
+    private ADAccService adAccService;
+    @Autowired
+    private IAuthenticationFacade authenticationFacade;
 
     @ApiOperation(value = "Creates a Universe")
     @ApiResponses({
@@ -36,6 +43,15 @@ public class UniverseController {
     public ResponseEntity<?> getUnviersePag(@PageableDefault(size = 10, page = 0) Pageable pageable) {
         return ResponseEntity.status(200).body(UniverseSrvc.getUniversePagSrvc(pageable));
     }
+
+    @ApiOperation(value = "Gets the universe list of the user")
+    @ApiResponse(code = 200, message = "", response = Pageable.class)
+    @GetMapping("/get/own")
+    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
+    public ResponseEntity<?> getUnvierseOwn() {
+        return ResponseEntity.status(200).body(UniverseSrvc.getUniverseOwnSrvc(authenticationFacade.getAuthentication().getName()));
+    }
+
 
     @ApiOperation(value = "Gets a single universe")
     @ApiResponse(code = 200, message = "", response = Pageable.class)

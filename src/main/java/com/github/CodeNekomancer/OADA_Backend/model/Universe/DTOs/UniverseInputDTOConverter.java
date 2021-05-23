@@ -1,5 +1,6 @@
-package com.github.CodeNekomancer.OADA_Backend.model.Universe;
+package com.github.CodeNekomancer.OADA_Backend.model.Universe.DTOs;
 
+import com.github.CodeNekomancer.OADA_Backend.model.Universe.Universe;
 import org.springframework.stereotype.Component;
 
 @Component

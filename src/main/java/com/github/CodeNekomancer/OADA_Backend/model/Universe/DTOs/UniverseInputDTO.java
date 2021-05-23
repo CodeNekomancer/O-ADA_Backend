@@ -1,4 +1,4 @@
-package com.github.CodeNekomancer.OADA_Backend.model.Universe;
+package com.github.CodeNekomancer.OADA_Backend.model.Universe.DTOs;
 
 import lombok.*;
 

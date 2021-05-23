@@ -34,7 +34,7 @@ public class ADAccController {
         }
     }
 
-    @GetMapping("/all")
+    @GetMapping("/get/all")
     @PreAuthorize("hasAnyRole('ADA')")
     public ResponseEntity<Iterable<ADAcc>> getADAccAll() {
         try {
@@ -44,7 +44,7 @@ public class ADAccController {
         }
     }
 
-    @GetMapping("/sng/{id}")
+    @GetMapping("/get/sng/{id}")
     @PreAuthorize("hasAnyRole('LOG', 'ADA')")
     public ResponseEntity<?> getADAccSng(@PathVariable(name = "id") String id) {
         getADAccOutputDTO ada = new getADAccOutputDTO(this.ADAccSrvc.getUserSngSrvc(id)); // TODO: let admins override this

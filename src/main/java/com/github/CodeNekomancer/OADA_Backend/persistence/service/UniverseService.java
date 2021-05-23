@@ -1,5 +1,6 @@
 package com.github.CodeNekomancer.OADA_Backend.persistence.service;
 
+import com.github.CodeNekomancer.OADA_Backend.configurations.ExceptionManager.NotFound.UniverseNotFoundException;
 import com.github.CodeNekomancer.OADA_Backend.configurations.XMLmanager.XmlUtil;
 import com.github.CodeNekomancer.OADA_Backend.model.Universe.Universe;
 import com.github.CodeNekomancer.OADA_Backend.model.Universe.UniverseInputDTO;
@@ -27,14 +28,17 @@ import java.util.stream.Collectors;
 public class UniverseService extends BaseService<Universe, Long, UniverseRepository> {
     private final UniverseInputDTOConverter UIDTOC;
 
-    public boolean genUniverse(Universe uni) {
+    public boolean genUniverse(String serverId) {
+        Universe uni = new Universe();
+        uni.setServerId(serverId);
         this.repo.save(uni);
-        modUniverseSrvc(uni);
+        modUniverseSrvc(uni.getUniverse_id());
         return this.repo.findById(uni.getUniverse_id()).isPresent();
     }
 
-    public boolean modUniverseSrvc(Universe uni) {
-        Universe u = new Universe();
+    public boolean modUniverseSrvc(Long id) {
+        if (this.repo.findById(id).isEmpty()) throw new UniverseNotFoundException();
+        Universe uni = this.repo.findById(id).get();
 
         String url = "";
         List<String> urlList = new ArrayList<>() {
@@ -44,15 +48,12 @@ public class UniverseService extends BaseService<Universe, Long, UniverseReposit
                 add(".ogame.gameforge.com/api/serverData.xml");
             }
         };
-
-        if (this.repo.findById(uni.getUniverse_id()).isPresent())
-            u = this.repo.findById(uni.getUniverse_id()).get();
-
-        if (!u.getServerId().isEmpty())
+        
+        if (!uni.getServerId().isEmpty())
             url = urlList.get(0) +
-                    u.getServerId().substring(2) +
+                    uni.getServerId().substring(2) +
                     urlList.get(1) +
-                    u.getServerId().substring(0, 2) +
+                    uni.getServerId().substring(0, 2) +
                     urlList.get(2);
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -76,18 +77,22 @@ public class UniverseService extends BaseService<Universe, Long, UniverseReposit
         } catch (ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
         }
-
-
+        
         return true;
     }
 
     public boolean delUnvierseSrvc(Long id) {
+        if (this.repo.findById(id).isEmpty()) throw new UniverseNotFoundException();
         this.repo.deleteById(id);
         return !this.repo.existsById(id);
     }
 
-    public Page<?> getUniverseSrvc(Pageable pageable) {
+    public Page<?> getUniversePagSrvc(Pageable pageable) {
         return this.repo.findAll(pageable);
     }
 
+    public Object getUniverseSngSrvc(Long id) {
+        if (this.repo.findById(id).isEmpty()) throw new UniverseNotFoundException();
+        return this.repo.findById(id).get();
+    }
 }

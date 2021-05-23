@@ -27,7 +27,7 @@ public class UAccController {
             @ApiResponse(code = 200, message = "", response = UAccOutputDTO.class),
             @ApiResponse(code = 404, message = "")
     })
-    @PostMapping("/addUAcc")
+    @PostMapping("/add")
     @PreAuthorize("hasAnyRole('LOG', 'ADA')")
     public ResponseEntity<?> addUAcc(@RequestBody UAccInputDTO UAccDTO) {
         getADAccOutputDTO ada = new getADAccOutputDTO(adAccService.getUserSngSrvc(UAccDTO.getItsADAcc())); // TODO: let admins override this

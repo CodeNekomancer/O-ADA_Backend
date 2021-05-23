@@ -10,7 +10,7 @@ import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccOutputDTO;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.UAcc;
 import com.github.CodeNekomancer.OADA_Backend.model.Universe.Universe;
 import com.github.CodeNekomancer.OADA_Backend.persistence.repository.UAccRepository;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -23,12 +23,11 @@ import java.net.URL;
 import java.util.*;
 
 @Service
-@AllArgsConstructor
 public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
-    private final UAccInputDTOConverter UACCUDTOC;
-    private final UniverseService universe;
-    private final ADAccService adacc;
-    private final EPService EPSrvc;
+    @Autowired private UAccInputDTOConverter UACCUDTOC;
+    @Autowired private UniverseService universe;
+    @Autowired private ADAccService adacc;
+    @Autowired private EPService EPSrvc;
 
     public UAccOutputDTO addUAccSrvc(UAccInputDTO uAccInputDTO) {
         Optional<Universe> ou = universe.repo.findById(uAccInputDTO.getItsUniverse());

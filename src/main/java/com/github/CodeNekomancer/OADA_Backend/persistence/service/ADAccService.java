@@ -2,8 +2,9 @@ package com.github.CodeNekomancer.OADA_Backend.persistence.service;
 
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.ADAcc;
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.AuthManagement.UserRole;
+import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.getADAccOutputDTO;
 import com.github.CodeNekomancer.OADA_Backend.persistence.repository.ADAccRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,36 +15,36 @@ import java.util.Random;
 import java.util.Set;
 
 @Service
-public class ADAccService extends BaseService<ADAcc, Long, ADAccRepository> {
+@AllArgsConstructor
+public class ADAccService extends BaseService<ADAcc, String, ADAccRepository> {
 
-    @Autowired
     @Lazy
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public Optional<ADAcc> findByUserName(String username) {
         return this.repo.findByUsername(username);
     }
 
-    public ADAcc genADAccSrvc(ADAcc userEntity) {
-        Set<UserRole> defaultRoles = new HashSet<UserRole>();
-        userEntity.setAdacc_ID((long) Math.abs(new Random().nextInt()));
+    public getADAccOutputDTO addADAccSrvc(ADAcc userEntity) {
+        Set<UserRole> defaultRoles = new HashSet<>();
+        userEntity.setAdacc_ID(String.valueOf(Math.abs(new Random().nextInt())));
         userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         if (userEntity.getRoles() == null) {
-            defaultRoles.add(UserRole.USER);
+            defaultRoles.add(UserRole.LOG);
             userEntity.setRoles(defaultRoles);
         } else if (userEntity.getRoles().size() == 0) {
-            defaultRoles.add(UserRole.USER);
+            defaultRoles.add(UserRole.LOG);
             userEntity.setRoles(defaultRoles);
         }
-        return this.repo.save(userEntity);
+        return new getADAccOutputDTO(this.repo.save(userEntity));
     }
 
-    public ADAcc getUserMonoSrvc(Long id) {
+    public ADAcc getUserSngSrvc(String id) {
         Optional<ADAcc> opUsr = this.repo.findById(id);
-        return (opUsr.isPresent()) ? opUsr.get() : new ADAcc();
+        return opUsr.orElseGet(ADAcc::new);
     }
 
-    public Boolean delADAccSrvc(Long id) {
+    public Boolean delADAccSrvc(String id) {
         boolean flag = false;
 
         if (this.ADAccExists(id)) {
@@ -53,7 +54,7 @@ public class ADAccService extends BaseService<ADAcc, Long, ADAccRepository> {
         return flag;
     }
 
-    public Boolean modADAccSrvc(ADAcc user, Long idUsuario) {
+    public Boolean modADAccSrvc(ADAcc user, String idUsuario) {
         boolean flag = false;
         if (this.ADAccExists(idUsuario)) {
             Optional<ADAcc> a = this.repo.findById(idUsuario);
@@ -72,9 +73,8 @@ public class ADAccService extends BaseService<ADAcc, Long, ADAccRepository> {
         return flag;
     }
 
-    private Boolean ADAccExists(Long id) {
+    private Boolean ADAccExists(String id) {
         Optional<ADAcc> opAl = this.repo.findById(id);
-        boolean present = opAl.isPresent();
-        return present;
+        return opAl.isPresent();
     }
 }

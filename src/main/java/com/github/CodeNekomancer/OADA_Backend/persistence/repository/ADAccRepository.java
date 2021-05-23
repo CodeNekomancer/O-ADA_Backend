@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ADAccRepository extends JpaRepository<ADAcc, Long> {
+public interface ADAccRepository extends JpaRepository<ADAcc, String> {
     Optional<ADAcc> findByUsername(String username);
 }

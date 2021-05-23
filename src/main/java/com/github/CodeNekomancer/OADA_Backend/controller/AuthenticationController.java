@@ -4,8 +4,7 @@ import com.github.CodeNekomancer.OADA_Backend.configurations.security.jwt.JwtTok
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.ADAcc;
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.AuthManagement.JwtUserResponse;
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.AuthManagement.LoginRequest;
-import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.ADAccDTOConverter;
-import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.GetADAccDTO;
+import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.AddADAccInputDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
-    private final ADAccDTOConverter converter;
 
     @PostMapping("/adacc/login")
     public JwtUserResponse login(@RequestBody LoginRequest loginRequest) {
@@ -42,10 +40,13 @@ public class AuthenticationController {
 
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/user/me")
-    public GetADAccDTO me(@AuthenticationPrincipal ADAcc user) {
-        return converter.convertUserEntityToGetUserDto(user);
+    @GetMapping("/adacc/slf")
+    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
+    public AddADAccInputDTO slf(@AuthenticationPrincipal AddADAccInputDTO user) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(auth.getPrincipal());
+
+        return user;
     }
 
     private JwtUserResponse convertUserEntityAndTokenToJwtUserResponse(ADAcc user, String jwtToken) {

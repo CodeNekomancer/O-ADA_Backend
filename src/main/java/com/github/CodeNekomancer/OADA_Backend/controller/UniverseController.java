@@ -1,6 +1,8 @@
 package com.github.CodeNekomancer.OADA_Backend.controller;
 
-import com.github.CodeNekomancer.OADA_Backend.model.Universe.Universe;
+import com.github.CodeNekomancer.OADA_Backend.configurations.security.IAuthenticationFacade;
+import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.getADAccOutputDTO;
+import com.github.CodeNekomancer.OADA_Backend.persistence.service.ADAccService;
 import com.github.CodeNekomancer.OADA_Backend.persistence.service.UniverseService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -8,8 +10,8 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,22 +20,45 @@ public class UniverseController {
 
     @Autowired
     private UniverseService UniverseSrvc;
+    @Autowired
+    private ADAccService adAccService;
+    @Autowired
+    private IAuthenticationFacade authenticationFacade;
 
     @ApiOperation(value = "Creates a Universe")
     @ApiResponses({
             @ApiResponse(code = 200, message = "", response = Boolean.class),
             @ApiResponse(code = 404, message = "", response = Boolean.class)
     })
-    @PostMapping("/genUniverse")
-    public ResponseEntity<?> genUniverse(@RequestBody Universe uni) {
-        return new ResponseEntity(UniverseSrvc.genUniverse(uni), HttpStatus.OK);
+    @PostMapping("/gen")
+    @PreAuthorize("hasAnyRole('ADA')")
+    public ResponseEntity<?> genUniverse(@RequestBody String serverId) {
+        return ResponseEntity.status(200).body(UniverseSrvc.genUniverse(serverId));
     }
 
     @ApiOperation(value = "Gets the universe list")
     @ApiResponse(code = 200, message = "", response = Pageable.class)
-    @GetMapping("/getUnvierseMult")
-    public ResponseEntity<?> getUnvierseMult(@PageableDefault(size = 10, page = 0) Pageable pageable) {
-        return new ResponseEntity(UniverseSrvc.getUniverseSrvc(pageable), HttpStatus.OK);
+    @GetMapping("/get/pag")
+    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
+    public ResponseEntity<?> getUnviersePag(@PageableDefault(size = 10, page = 0) Pageable pageable) {
+        return ResponseEntity.status(200).body(UniverseSrvc.getUniversePagSrvc(pageable));
+    }
+
+    @ApiOperation(value = "Gets the universe list of the user")
+    @ApiResponse(code = 200, message = "", response = Pageable.class)
+    @GetMapping("/get/own")
+    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
+    public ResponseEntity<?> getUnvierseOwn() {
+        return ResponseEntity.status(200).body(UniverseSrvc.getUniverseOwnSrvc(authenticationFacade.getAuthentication().getName()));
+    }
+
+
+    @ApiOperation(value = "Gets a single universe")
+    @ApiResponse(code = 200, message = "", response = Pageable.class)
+    @GetMapping("/get/sng/{id}")
+    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
+    public ResponseEntity<?> getUnvierseSng(@PathVariable(name = "id") Long id) {
+        return ResponseEntity.status(200).body(UniverseSrvc.getUniverseSngSrvc(id));
     }
 
     @ApiOperation(value = "Modifies a Universe")
@@ -41,9 +66,10 @@ public class UniverseController {
             @ApiResponse(code = 200, message = "", response = Boolean.class),
             @ApiResponse(code = 404, message = "", response = Boolean.class)
     })
-    @PutMapping("/modUnvierse")
-    public ResponseEntity<?> modUnvierse(@RequestBody Universe uni) {
-        return new ResponseEntity(UniverseSrvc.modUniverseSrvc(uni), HttpStatus.OK);
+    @PutMapping("/mod/{id}")
+    @PreAuthorize("hasAnyRole('ADA')")
+    public ResponseEntity<?> modUnvierse(@PathVariable(name = "id") Long id) {
+        return ResponseEntity.status(200).body(UniverseSrvc.modUniverseSrvc(id));
     }
 
     @ApiOperation(value = "Deletes a Universe")
@@ -51,8 +77,9 @@ public class UniverseController {
             @ApiResponse(code = 200, message = "", response = Boolean.class),
             @ApiResponse(code = 404, message = "", response = Boolean.class)
     })
-    @DeleteMapping("/delUnvierse")
-    public ResponseEntity<?> delUnvierse(@RequestBody Long id) {
-        return new ResponseEntity(UniverseSrvc.delUnvierseSrvc(id), HttpStatus.OK);
+    @DeleteMapping("/del/{id}")
+    @PreAuthorize("hasAnyRole('ADA')")
+    public ResponseEntity<?> delUnvierse(@PathVariable(name = "id") Long id) {
+        return ResponseEntity.status(200).body(UniverseSrvc.delUnvierseSrvc(id));
     }
 }

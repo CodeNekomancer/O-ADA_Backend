@@ -32,9 +32,9 @@ public class EPController {
             @ApiResponse(code = 200, message = "", response = Boolean.class),
             @ApiResponse(code = 404, message = "", response = Boolean.class)
     })
-    @PostMapping("/get/{id}")
+    @PostMapping("/get/sng/{id}")
     @PreAuthorize("hasAnyRole('LOG', 'ADA')")
-    public ResponseEntity<?> get(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> getSng(@PathVariable(name = "id") Long id) {
         return ResponseEntity.status(200).body(EPSrvc.getSngSrvc(id));
     }
 

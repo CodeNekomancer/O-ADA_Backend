@@ -1,9 +1,11 @@
 package com.github.CodeNekomancer.OADA_Backend.persistence.service;
 
+import com.github.CodeNekomancer.OADA_Backend.configurations.ExceptionManager.NotFound.UAccNotFoundException;
 import com.github.CodeNekomancer.OADA_Backend.configurations.XMLmanager.XmlUtil;
 import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.ADAcc;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccInputDTO;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccInputDTOConverter;
+import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccOutputDTO;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.UAcc;
 import com.github.CodeNekomancer.OADA_Backend.model.Universe.Universe;
 import com.github.CodeNekomancer.OADA_Backend.persistence.repository.UAccRepository;
@@ -27,14 +29,14 @@ public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
     private final ADAccService adacc;
     private final EPService EPSrvc;
 
-    public Boolean addUAccSrvc(UAccInputDTO uAccInputDTO) {
+    public UAccOutputDTO addUAccSrvc(UAccInputDTO uAccInputDTO) {
         Optional<Universe> ou = universe.repo.findById(uAccInputDTO.getItsUniverse());
         Optional<ADAcc> oa = adacc.repo.findById(uAccInputDTO.getItsADAcc());
 
         if (!(oa.isPresent() && ou.isPresent())) {
             System.out.println("ADAcc: " + oa.isPresent());
             System.out.println("Unvierse: " + ou.isPresent());
-            return false;
+            throw new UAccNotFoundException();
         }
 
         UAcc uAcc = new UAcc();
@@ -46,10 +48,13 @@ public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
         this.repo.save(uAcc);
         EPSrvc.addEPSrvc(uAcc);
 
-        return this.repo.findById(uAcc.getUacc_ID()).isPresent();
+        if (this.repo.findById(uAcc.getUacc_ID()).isEmpty())
+            throw new UAccNotFoundException();
+
+        return new UAccOutputDTO(this.repo.findById(uAcc.getUacc_ID()).get());
     }
 
-    private UAcc getUAccWithOgameId(UAcc uAcc) {
+    private UAccOutputDTO getUAccWithOgameId(UAcc uAcc) {
         String url;
         List<String> urlList =
                 new ArrayList<>() {
@@ -106,16 +111,16 @@ public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
         } catch (ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
         }
-        return uAcc;
+        return new UAccOutputDTO(uAcc);
     }
 
-    public UAcc getUAccSngSrvc(Long id) {
-        if (this.repo.findById(id).isPresent()) return this.repo.findById(id).get();
-
-        return null;
+    public UAccOutputDTO getUAccSngSrvc(Long id) {
+        if (this.repo.findById(id).isPresent()) return new UAccOutputDTO(this.repo.findById(id).get());
+        throw new UAccNotFoundException();
     }
 
     public boolean delUAccSngSrvc(Long id) {
+        if (!this.repo.existsById(id)) throw new UAccNotFoundException();
         this.repo.deleteById(id);
         return !this.repo.existsById(id);
     }

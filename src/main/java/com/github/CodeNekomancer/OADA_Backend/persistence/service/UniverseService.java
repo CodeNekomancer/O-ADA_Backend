@@ -1,5 +1,6 @@
 package com.github.CodeNekomancer.OADA_Backend.persistence.service;
 
+import com.github.CodeNekomancer.OADA_Backend.configurations.XMLmanager.XmlUtil;
 import com.github.CodeNekomancer.OADA_Backend.model.Universe.Universe;
 import com.github.CodeNekomancer.OADA_Backend.model.Universe.UniverseInputDTO;
 import com.github.CodeNekomancer.OADA_Backend.model.Universe.UniverseInputDTOConverter;
@@ -10,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -18,7 +18,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +37,7 @@ public class UniverseService extends BaseService<Universe, Long, UniverseReposit
         Universe u = new Universe();
 
         String url = "";
-        List<String> urlList = new ArrayList<String>() {
+        List<String> urlList = new ArrayList<>() {
             {
                 add("https://s");
                 add("-");
@@ -83,33 +84,6 @@ public class UniverseService extends BaseService<Universe, Long, UniverseReposit
     public boolean delUnvierseSrvc(Long id) {
         this.repo.deleteById(id);
         return !this.repo.existsById(id);
-    }
-
-    public static final class XmlUtil {
-        private XmlUtil() {
-        }
-
-        public static List<Node> asList(NodeList n) {
-            return n.getLength() == 0 ?
-                    Collections.emptyList() : new NodeListWrapper(n);
-        }
-
-        static final class NodeListWrapper extends AbstractList<Node>
-                implements RandomAccess {
-            private final NodeList list;
-
-            NodeListWrapper(NodeList l) {
-                list = l;
-            }
-
-            public Node get(int index) {
-                return list.item(index);
-            }
-
-            public int size() {
-                return list.getLength();
-            }
-        }
     }
 
     public Page<?> getUniverseSrvc(Pageable pageable) {

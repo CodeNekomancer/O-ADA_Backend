@@ -42,7 +42,7 @@ public class UniverseService extends BaseService<Universe, Long, UniverseReposit
         return this.repo.findById(uni.getUniverse_id()).isPresent();
     }
 
-    public boolean modUniverseSrvc(Long id) {
+    public UniverseOutputDTO modUniverseSrvc(Long id) {
         if (this.repo.findById(id).isEmpty()) throw new UniverseNotFoundException();
         Universe uni = this.repo.findById(id).get();
 
@@ -84,7 +84,7 @@ public class UniverseService extends BaseService<Universe, Long, UniverseReposit
             e.printStackTrace();
         }
 
-        return true;
+        return new UniverseOutputDTO(uni);
     }
 
     public boolean delUnvierseSrvc(Long id) {
@@ -93,8 +93,8 @@ public class UniverseService extends BaseService<Universe, Long, UniverseReposit
         return !this.repo.existsById(id);
     }
 
-    public Page<?> getUniversePagSrvc(Pageable pageable) {
-        return this.repo.findAll(pageable);
+    public List<UniverseOutputDTO> getUniversePagSrvc(Pageable pageable) {
+        return this.repo.findAll(pageable).stream().map(UniverseOutputDTO::new).collect(Collectors.toList());
     }
 
     public Universe getUniverseSngSrvc(Long id) {

@@ -39,7 +39,6 @@ public class UniverseController {
     @ApiOperation(value = "Gets the universe list")
     @ApiResponse(code = 200, message = "", response = Pageable.class)
     @GetMapping("/get/pag")
-    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
     public ResponseEntity<?> getUnviersePag(@PageableDefault(size = 10, page = 0) Pageable pageable) {
         return ResponseEntity.status(200).body(UniverseSrvc.getUniversePagSrvc(pageable));
     }
@@ -47,7 +46,6 @@ public class UniverseController {
     @ApiOperation(value = "Gets the universe list of the user")
     @ApiResponse(code = 200, message = "", response = Pageable.class)
     @GetMapping("/get/own")
-    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
     public ResponseEntity<?> getUnvierseOwn() {
         return ResponseEntity.status(200).body(UniverseSrvc.getUniverseOwnSrvc(authenticationFacade.getAuthentication().getName()));
     }

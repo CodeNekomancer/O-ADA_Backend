@@ -40,9 +40,9 @@ public class AuthenticationController {
 
     }
 
-    @GetMapping("/user/me")
+    @GetMapping("/adacc/slf")
     @PreAuthorize("hasAnyRole('LOG', 'ADA')")
-    public AddADAccInputDTO me(@AuthenticationPrincipal AddADAccInputDTO user) {
+    public AddADAccInputDTO slf(@AuthenticationPrincipal AddADAccInputDTO user) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         System.out.println(auth.getPrincipal());
 

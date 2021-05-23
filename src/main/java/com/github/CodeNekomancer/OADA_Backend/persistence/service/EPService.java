@@ -12,7 +12,7 @@ public class EPService extends BaseService<EP, Long, EPRepository> {
     @Autowired
     private UAccService uaccSrvc;
 
-    public Boolean genEPSrvc(UAcc uAcc) {
+    public Boolean addEPSrvc(UAcc uAcc) {
         EP ep = new EP();
         ep.setItsUAcc(uAcc);
         ep.setName(uAcc.getItsUniverse().getServerId() + "_" + uAcc.getItsADAcc().getUsername());

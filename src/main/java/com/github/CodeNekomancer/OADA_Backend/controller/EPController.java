@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,9 +23,10 @@ public class EPController {
             @ApiResponse(code = 200, message = "", response = Boolean.class),
             @ApiResponse(code = 404, message = "", response = Boolean.class)
     })
-    @PostMapping("/genEP")
-    public ResponseEntity<?> genEP(@RequestBody UAcc uAcc) {
-        return new ResponseEntity(EPSrvc.genEPSrvc(uAcc), HttpStatus.OK);
+    @PostMapping("/addEP")
+    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
+    public ResponseEntity<?> addEP(@RequestBody UAcc uAcc) {
+        return new ResponseEntity(EPSrvc.addEPSrvc(uAcc), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Deletes an EP")
@@ -33,6 +35,7 @@ public class EPController {
             @ApiResponse(code = 404, message = "", response = Boolean.class)
     })
     @DeleteMapping("/delEP")
+    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
     public ResponseEntity<?> delEP(@RequestBody Long id) {
         return new ResponseEntity(EPSrvc.delEPSrvc(id), HttpStatus.OK);
     }

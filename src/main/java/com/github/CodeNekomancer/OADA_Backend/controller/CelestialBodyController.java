@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("celestialbody")
 public class CelestialBodyController {
+    // TODO: WorkInProgress. GET page. GET all. POST manual. DEL manual. PUT update.
 
     @Autowired
     private CelestialBodyService CelestialBodySrvc;
@@ -25,6 +27,7 @@ public class CelestialBodyController {
             @ApiResponse(code = 200, message = "", response = Boolean.class),
             @ApiResponse(code = 404, message = "", response = Boolean.class)
     })
+    @PreAuthorize("hasAnyRole('ADA')")
     @PostMapping("/genCelestialBodySchemeAuto")
     public ResponseEntity<?> genCelestialBodySchemeAuto(@RequestBody UAcc uacc) {
         return new ResponseEntity(CelestialBodySrvc.genCelestialBodySchemeAuto(uacc), HttpStatus.OK);

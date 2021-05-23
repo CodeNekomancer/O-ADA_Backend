@@ -1,22 +1,25 @@
 package com.github.CodeNekomancer.OADA_Backend.controller;
 
+import com.github.CodeNekomancer.OADA_Backend.configurations.security.IAuthenticationFacade;
+import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.DTOs.getADAccOutputDTO;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccInputDTO;
+import com.github.CodeNekomancer.OADA_Backend.persistence.service.ADAccService;
 import com.github.CodeNekomancer.OADA_Backend.persistence.service.UAccService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("uacc")
 public class UAccController {
-
-    @Autowired
-    private UAccService UAccSrvc;
+    private final UAccService UAccSrvc;
+    private final ADAccService adAccService;
+    private final IAuthenticationFacade authenticationFacade;
 
     @ApiOperation(value = "Creates a UAcc")
     @ApiResponses({
@@ -24,8 +27,12 @@ public class UAccController {
             @ApiResponse(code = 404, message = "", response = Boolean.class)
     })
     @PostMapping("/addUAcc")
+    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
     public ResponseEntity<?> addUAcc(@RequestBody UAccInputDTO UAccDTO) {
-        return new ResponseEntity(UAccSrvc.addUAccSrvc(UAccDTO), HttpStatus.OK);
+        getADAccOutputDTO ada = new getADAccOutputDTO(adAccService.getUserSngSrvc(UAccDTO.getItsADAcc())); // TODO: let admins override this
+        if (!authenticationFacade.getAuthentication().getName().equals(ada.getUsername())) return ResponseEntity.status(401).body("You are trying to access to a resource that it is not on your domain. Think twice what you are asking for.");
+
+        return ResponseEntity.status(200).body(UAccSrvc.addUAccSrvc(UAccDTO));
     }
 
     @ApiOperation(value = "Gets an UAcc")
@@ -33,9 +40,15 @@ public class UAccController {
             @ApiResponse(code = 200, message = "", response = Boolean.class),
             @ApiResponse(code = 404, message = "", response = Boolean.class)
     })
-    @GetMapping("/getUAccMono")
-    public ResponseEntity<?> getUAccMono(@RequestParam Long id) {
-        return new ResponseEntity(UAccSrvc.getUAccMonoSrvc(id), HttpStatus.OK);
+    @GetMapping("/sng/{id}")
+    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
+    public ResponseEntity<?> getUAccSng(@PathVariable(name = "id") Long id) {
+        if (this.UAccSrvc.findById(id).isEmpty()) return ResponseEntity.notFound().build();
+
+        getADAccOutputDTO ada = new getADAccOutputDTO(adAccService.getUserSngSrvc(this.UAccSrvc.findById(id).get().getItsADAcc().getAdacc_ID())); // TODO: let admins override this
+        if (!authenticationFacade.getAuthentication().getName().equals(ada.getUsername())) return ResponseEntity.status(401).body("You are trying to access to a resource that it is not on your domain. Think twice what you are asking for.");
+
+        return ResponseEntity.status(200).body(UAccSrvc.getUAccSngSrvc(id));
     }
 
     @ApiOperation(value = "Deletes an UAcc")
@@ -43,9 +56,15 @@ public class UAccController {
             @ApiResponse(code = 200, message = "", response = Boolean.class),
             @ApiResponse(code = 404, message = "", response = Boolean.class)
     })
-    @DeleteMapping("/delUAccMono")
-    public ResponseEntity<?> delUAccMono(@RequestBody Long id) {
-        return new ResponseEntity(UAccSrvc.delUAccMonoSrvc(id), HttpStatus.OK);
+    @DeleteMapping("/del/{id}")
+    @PreAuthorize("hasAnyRole('LOG', 'ADA')")
+    public ResponseEntity<?> delUAccSng(@PathVariable(name = "id") Long id) {
+        if (this.UAccSrvc.findById(id).isEmpty()) return ResponseEntity.notFound().build();
+
+        getADAccOutputDTO ada = new getADAccOutputDTO(adAccService.getUserSngSrvc(this.UAccSrvc.findById(id).get().getItsADAcc().getAdacc_ID())); // TODO: let admins override this
+        if (!authenticationFacade.getAuthentication().getName().equals(ada.getUsername())) return ResponseEntity.status(401).body("You are trying to access to a resource that it is not on your domain. Think twice what you are asking for.");
+
+        return ResponseEntity.status(200).body(UAccSrvc.delUAccSngSrvc(id));
     }
 
 }

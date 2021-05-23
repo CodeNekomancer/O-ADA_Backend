@@ -49,7 +49,7 @@ public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
         uAcc.setOgameUniverseAccountId(getUAccWithOgameId(uAcc).getOgameUniverseAccountId());
 
         this.repo.save(uAcc);
-        EPSrvc.genEPSrvc(uAcc);
+        EPSrvc.addEPSrvc(uAcc);
 
         return this.repo.findById(uAcc.getUacc_ID()).isPresent();
     }
@@ -114,13 +114,13 @@ public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
         return uAcc;
     }
 
-    public UAcc getUAccMonoSrvc(Long id) {
+    public UAcc getUAccSngSrvc(Long id) {
         if (this.repo.findById(id).isPresent()) return this.repo.findById(id).get();
 
         return null;
     }
 
-    public boolean delUAccMonoSrvc(Long id) {
+    public boolean delUAccSngSrvc(Long id) {
         this.repo.deleteById(id);
         return !this.repo.existsById(id);
     }

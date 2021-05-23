@@ -102,6 +102,16 @@ public class UniverseService extends BaseService<Universe, Long, UniverseReposit
         return this.repo.findById(id).get();
     }
 
+    public List<UniverseOutputDTO> getUniverseOwnDeprecatedSrvc(String id) {
+        if (adAccService.findById(id).isEmpty()) throw new ADAccNotFoundException();
+
+        return  adAccService.findById(id)
+                .get()
+                .getUniverseAccounts().stream().map(UAccOutputDTO::new).collect(Collectors.toList())
+                .stream().map(UAccOutputDTO::getItsUniverse).collect(Collectors.toList())
+                .stream().filter(l -> this.repo.findById(l).isPresent()).map(l -> new UniverseOutputDTO(this.repo.getOne(l))).collect(Collectors.toList());
+    }
+
     public List<UniverseOutputDTO> getUniverseOwnSrvc(String authName) {
         if (adAccService.findByUserName(authName).isEmpty()) throw new ADAccNotFoundException();
 

@@ -50,6 +50,13 @@ public class UniverseController {
         return ResponseEntity.status(200).body(UniverseSrvc.getUniverseOwnSrvc(authenticationFacade.getAuthentication().getName()));
     }
 
+    @ApiOperation(value = "Gets the universe list of the user but should be not used")
+    @ApiResponse(code = 200, message = "", response = Pageable.class)
+    @GetMapping("/get/own/deprecated/{id}")
+    @Deprecated
+    public ResponseEntity<?> getUnvierseOwnUns(@PathVariable(name = "id") String id) {
+        return ResponseEntity.status(200).body(UniverseSrvc.getUniverseOwnDeprecatedSrvc(id));
+    }
 
     @ApiOperation(value = "Gets a single universe")
     @ApiResponse(code = 200, message = "", response = Pageable.class)

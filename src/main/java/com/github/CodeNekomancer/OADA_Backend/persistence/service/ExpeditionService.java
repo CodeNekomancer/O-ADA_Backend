@@ -7,8 +7,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class ExpeditionService extends BaseService<Expedition, Long, ExpeditionRepository> {
 
-    public boolean genExpeditionSrvc(Expedition expedition) {
-        this.repo.save(expedition);
-        return this.repo.findById(expedition.getExpedition_ID()).isPresent();
+    public String addExpeditionSrvc(String expedition) {
+        Expedition exp = new Expedition();
+        exp.dataExtractor(expedition).forEach(e -> this.repo.save(e));
+
+        return exp.dataExtractor(expedition).size() + " expeditions saved.";
+    }
+
+    public String getExpeditionByEPSrvc(String EPName, String authName) {
+        Expedition exp = new Expedition();
+        // TODO: getExpeditionByEPSrvc(String a, String b)
+        return null;
     }
 }

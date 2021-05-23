@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -24,4 +26,10 @@ public class Expedition {
 
     @ManyToOne
     private EP itsEP;
+
+    public List<Expedition> dataExtractor(String s) {
+        // TODO: expedition data extractor.
+
+        return new ArrayList<>();
+    }
 }

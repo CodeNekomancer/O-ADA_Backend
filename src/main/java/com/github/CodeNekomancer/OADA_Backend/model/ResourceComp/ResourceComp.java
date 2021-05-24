@@ -22,6 +22,6 @@ public class ResourceComp {
     private Integer MO;
     private Integer energy;
 
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Expedition itsExpedition;
 }

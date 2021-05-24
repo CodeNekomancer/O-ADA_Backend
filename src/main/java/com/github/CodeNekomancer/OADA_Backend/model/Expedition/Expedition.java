@@ -27,6 +27,6 @@ public class Expedition {
     @ManyToOne
     private EP itsEP;
 
-    @OneToMany(mappedBy = "itsExpedition")
-    private List<ResourceComp> resourcesObtained;
+    @OneToOne(mappedBy = "itsExpedition")
+    private ResourceComp resourcesObtained;
 }

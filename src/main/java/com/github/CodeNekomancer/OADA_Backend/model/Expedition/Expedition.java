@@ -1,12 +1,14 @@
 package com.github.CodeNekomancer.OADA_Backend.model.Expedition;
 
 import com.github.CodeNekomancer.OADA_Backend.model.EP.EP;
+import com.github.CodeNekomancer.OADA_Backend.model.ResourceComp.ResourceComp;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -24,4 +26,7 @@ public class Expedition {
 
     @ManyToOne
     private EP itsEP;
+
+    @OneToMany(mappedBy = "itsExpedition")
+    private List<ResourceComp> resourcesObtained;
 }

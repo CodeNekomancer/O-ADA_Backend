@@ -16,9 +16,9 @@ public class ResourceComp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long resourceComp_ID;
 
-    private Integer metal;
-    private Integer crystal;
-    private Integer duty;
+    private Long metal;
+    private Long crystal;
+    private Long duty;
     private Integer MO;
     private Integer energy;
 

@@ -2,17 +2,17 @@ package com.github.CodeNekomancer.OADA_Backend.model.Expedition.DTOs;
 
 import com.github.CodeNekomancer.OADA_Backend.model.Expedition.Expedition;
 import com.github.CodeNekomancer.OADA_Backend.model.ResourceComp.ResourceComp;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import java.util.Date;
 
-@Entity
-@AllArgsConstructor
+
+@Getter
+@Setter
 @NoArgsConstructor
-@Data
+@AllArgsConstructor
+@Builder
 public class ExpeditionOutputDTO {
     private Long expedition_ID;
     private Date datetime;

@@ -50,7 +50,6 @@ public class UniverseController {
         return ResponseEntity.status(200).body(UniverseSrvc.getUniverseOwnSrvc(authenticationFacade.getAuthentication().getName()));
     }
 
-
     @ApiOperation(value = "Gets a single universe")
     @ApiResponse(code = 200, message = "", response = Pageable.class)
     @GetMapping("/get/sng/{id}")

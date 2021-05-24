@@ -42,7 +42,7 @@ public class ExpeditionService extends BaseService<Expedition, Long, ExpeditionR
         return false;
     }
 
-    public List<ExpeditionOutputDTO> getAllExpeditionSrvc(Long EPid, String authName) {
+    public List<ExpeditionOutputDTO> getOwnExpeditionSrvc(Long EPid, String authName) {
         if (!authenticationFacade
                 .getAuthentication()
                 .getName()

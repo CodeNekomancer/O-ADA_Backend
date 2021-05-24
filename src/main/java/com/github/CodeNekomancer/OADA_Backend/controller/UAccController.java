@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +56,13 @@ public class UAccController {
             return ResponseEntity.status(401).body("You are trying to access to a resource that it is not on your domain. Think twice what you are asking for.");
 
         return ResponseEntity.status(200).body(UAccSrvc.getUAccSngSrvc(id));
+    }
+
+    @ApiOperation(value = "Gets the UAcc list of the user")
+    @ApiResponse(code = 200, message = "", response = Pageable.class)
+    @GetMapping("/get/own")
+    public ResponseEntity<?> getUnvierseOwn() {
+        return ResponseEntity.status(200).body(UAccSrvc.getUAccOwnSrvc(authenticationFacade.getAuthentication().getName()));
     }
 
     @ApiOperation(value = "Deletes an UAcc")

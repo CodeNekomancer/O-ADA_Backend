@@ -2,7 +2,13 @@ package com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs;
 
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.UAcc;
 import com.github.CodeNekomancer.OADA_Backend.model.Universe.DTOs.UniverseOutputDTO;
+import lombok.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UAccOwnOutDTO {
     private String name;
     private String alliance;

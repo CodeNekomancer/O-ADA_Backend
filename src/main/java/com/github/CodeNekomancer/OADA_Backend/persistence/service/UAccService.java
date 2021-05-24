@@ -128,8 +128,6 @@ public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
 
         return  adacc.findByUserName(authName)
                 .get()
-                .getUniverseAccounts().stream().map(UAccOutputDTO::new).collect(Collectors.toList())
-                .stream().map(UAccOutputDTO::getItsUniverse).collect(Collectors.toList())
-                .stream().filter(l -> this.repo.findById(l).isPresent()).map(l -> new UAccOwnOutDTO(this.repo.getOne(l))).collect(Collectors.toList());
+                .getUniverseAccounts().stream().map(UAccOwnOutDTO::new).collect(Collectors.toList());
     }
 }

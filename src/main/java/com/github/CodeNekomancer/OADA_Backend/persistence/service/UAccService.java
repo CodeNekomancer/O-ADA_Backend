@@ -1,5 +1,6 @@
 package com.github.CodeNekomancer.OADA_Backend.persistence.service;
 
+import com.github.CodeNekomancer.OADA_Backend.configurations.ExceptionManager.NotFound.ADAccNotFoundException;
 import com.github.CodeNekomancer.OADA_Backend.configurations.ExceptionManager.NotFound.UAccNotFoundException;
 import com.github.CodeNekomancer.OADA_Backend.configurations.ExceptionManager.NotFound.UniverseNotFoundException;
 import com.github.CodeNekomancer.OADA_Backend.configurations.XMLmanager.XmlUtil;
@@ -7,7 +8,9 @@ import com.github.CodeNekomancer.OADA_Backend.model.ADAcc.ADAcc;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccInputDTO;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccInputDTOConverter;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccOutputDTO;
+import com.github.CodeNekomancer.OADA_Backend.model.UAcc.DTOs.UAccOwnOutDTO;
 import com.github.CodeNekomancer.OADA_Backend.model.UAcc.UAcc;
+import com.github.CodeNekomancer.OADA_Backend.model.Universe.DTOs.UniverseOutputDTO;
 import com.github.CodeNekomancer.OADA_Backend.model.Universe.Universe;
 import com.github.CodeNekomancer.OADA_Backend.persistence.repository.UAccRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
@@ -117,5 +121,13 @@ public class UAccService extends BaseService<UAcc, Long, UAccRepository> {
         if (!this.repo.existsById(id)) throw new UAccNotFoundException();
         this.repo.deleteById(id);
         return !this.repo.existsById(id);
+    }
+
+    public List<UAccOwnOutDTO> getUAccOwnSrvc(String authName) {
+        if (adacc.findByUserName(authName).isEmpty()) throw new ADAccNotFoundException();
+
+        return  adacc.findByUserName(authName)
+                .get()
+                .getUniverseAccounts().stream().map(UAccOwnOutDTO::new).collect(Collectors.toList());
     }
 }
